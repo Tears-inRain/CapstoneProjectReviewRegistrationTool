@@ -1,0 +1,14 @@
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\obj\Debug\net10.0\CapstoneReview.Repository.GeneratedMSBuildEditorConfig.editorconfig
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\obj\Debug\net10.0\CapstoneReview.Repository.AssemblyInfoInputs.cache
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\obj\Debug\net10.0\CapstoneReview.Repository.AssemblyInfo.cs
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\obj\Debug\net10.0\CapstoneReview.Repository.csproj.CoreCompileInputs.cache
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\bin\Debug\net10.0\CapstoneReview.Repository.deps.json
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\bin\Debug\net10.0\CapstoneReview.Repository.runtimeconfig.json
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\bin\Debug\net10.0\CapstoneReview.Repository.dll
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\bin\Debug\net10.0\CapstoneReview.Repository.pdb
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\obj\Debug\net10.0\CapstoneReview.Repository.csproj.AssemblyReference.cache
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\obj\Debug\net10.0\CapstoneReview.Repository.dll
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\obj\Debug\net10.0\refint\CapstoneReview.Repository.dll
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\obj\Debug\net10.0\CapstoneReview.Repository.pdb
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\obj\Debug\net10.0\CapstoneReview.Repository.genruntimeconfig.cache
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\obj\Debug\net10.0\ref\CapstoneReview.Repository.dll

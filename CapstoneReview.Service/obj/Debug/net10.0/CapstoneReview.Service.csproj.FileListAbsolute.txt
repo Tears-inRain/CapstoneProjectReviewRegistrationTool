@@ -1,0 +1,15 @@
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\bin\Debug\net10.0\CapstoneReview.Service.deps.json
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\bin\Debug\net10.0\CapstoneReview.Service.dll
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\bin\Debug\net10.0\CapstoneReview.Service.pdb
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\bin\Debug\net10.0\CapstoneReview.Repository.dll
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\bin\Debug\net10.0\CapstoneReview.Repository.pdb
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\obj\Debug\net10.0\CapstoneReview.Service.csproj.AssemblyReference.cache
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\obj\Debug\net10.0\CapstoneReview.Service.GeneratedMSBuildEditorConfig.editorconfig
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\obj\Debug\net10.0\CapstoneReview.Service.AssemblyInfoInputs.cache
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\obj\Debug\net10.0\CapstoneReview.Service.AssemblyInfo.cs
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\obj\Debug\net10.0\CapstoneReview.Service.csproj.CoreCompileInputs.cache
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\obj\Debug\net10.0\Capstone.ABE94487.Up2Date
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\obj\Debug\net10.0\CapstoneReview.Service.dll
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\obj\Debug\net10.0\refint\CapstoneReview.Service.dll
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\obj\Debug\net10.0\CapstoneReview.Service.pdb
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\obj\Debug\net10.0\ref\CapstoneReview.Service.dll

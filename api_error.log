@@ -1,0 +1,269 @@
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (614ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+capstone_api  |       CREATE DATABASE [CapstoneReviewDb];
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (359ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+capstone_api  |       IF SERVERPROPERTY('EngineEdition') <> 5
+capstone_api  |       BEGIN
+capstone_api  |           ALTER DATABASE [CapstoneReviewDb] SET READ_COMMITTED_SNAPSHOT ON;
+capstone_api  |       END;
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (10ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT 1
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (12ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       CREATE TABLE [Lecturers] (
+capstone_api  |           [Id] int NOT NULL IDENTITY,
+capstone_api  |           [FullName] nvarchar(100) NOT NULL,
+capstone_api  |           [Email] nvarchar(100) NOT NULL,
+capstone_api  |           [MinSlot] int NOT NULL,
+capstone_api  |           [MaxSlot] int NOT NULL,
+capstone_api  |           CONSTRAINT [PK_Lecturers] PRIMARY KEY ([Id])
+capstone_api  |       );
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       CREATE TABLE [Slots] (
+capstone_api  |           [Id] int NOT NULL IDENTITY,
+capstone_api  |           [ReviewRound] int NOT NULL,
+capstone_api  |           [StartTime] datetime2 NOT NULL,
+capstone_api  |           [EndTime] datetime2 NOT NULL,
+capstone_api  |           [Room] nvarchar(50) NOT NULL,
+capstone_api  |           [RegistrationDeadline] datetime2 NOT NULL,
+capstone_api  |           CONSTRAINT [PK_Slots] PRIMARY KEY ([Id])
+capstone_api  |       );
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       CREATE TABLE [Topics] (
+capstone_api  |           [Id] int NOT NULL IDENTITY,
+capstone_api  |           [Title] nvarchar(250) NOT NULL,
+capstone_api  |           [Description] nvarchar(max) NOT NULL,
+capstone_api  |           [LecturerId] int NOT NULL,
+capstone_api  |           CONSTRAINT [PK_Topics] PRIMARY KEY ([Id]),
+capstone_api  |           CONSTRAINT [FK_Topics_Lecturers_LecturerId] FOREIGN KEY ([LecturerId]) REFERENCES [Lecturers] ([Id]) ON DELETE NO ACTION
+capstone_api  |       );
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       CREATE TABLE [SlotLecturers] (
+capstone_api  |           [SlotId] int NOT NULL,
+capstone_api  |           [LecturerId] int NOT NULL,
+capstone_api  |           CONSTRAINT [PK_SlotLecturers] PRIMARY KEY ([SlotId], [LecturerId]),
+capstone_api  |           CONSTRAINT [FK_SlotLecturers_Lecturers_LecturerId] FOREIGN KEY ([LecturerId]) REFERENCES [Lecturers] ([Id]) ON DELETE NO ACTION,
+capstone_api  |           CONSTRAINT [FK_SlotLecturers_Slots_SlotId] FOREIGN KEY ([SlotId]) REFERENCES [Slots] ([Id]) ON DELETE CASCADE
+capstone_api  |       );
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       CREATE TABLE [SlotTopics] (
+capstone_api  |           [SlotId] int NOT NULL,
+capstone_api  |           [TopicId] int NOT NULL,
+capstone_api  |           CONSTRAINT [PK_SlotTopics] PRIMARY KEY ([SlotId], [TopicId]),
+capstone_api  |           CONSTRAINT [FK_SlotTopics_Slots_SlotId] FOREIGN KEY ([SlotId]) REFERENCES [Slots] ([Id]) ON DELETE CASCADE,
+capstone_api  |           CONSTRAINT [FK_SlotTopics_Topics_TopicId] FOREIGN KEY ([TopicId]) REFERENCES [Topics] ([Id]) ON DELETE NO ACTION
+capstone_api  |       );
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       CREATE TABLE [Teams] (
+capstone_api  |           [Id] int NOT NULL IDENTITY,
+capstone_api  |           [TeamName] nvarchar(100) NOT NULL,
+capstone_api  |           [LeaderId] int NOT NULL,
+capstone_api  |           [TopicId] int NOT NULL,
+capstone_api  |           CONSTRAINT [PK_Teams] PRIMARY KEY ([Id]),
+capstone_api  |           CONSTRAINT [FK_Teams_Topics_TopicId] FOREIGN KEY ([TopicId]) REFERENCES [Topics] ([Id]) ON DELETE NO ACTION
+capstone_api  |       );
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       CREATE TABLE [Students] (
+capstone_api  |           [Id] int NOT NULL IDENTITY,
+capstone_api  |           [RollNumber] nvarchar(20) NOT NULL,
+capstone_api  |           [FullName] nvarchar(100) NOT NULL,
+capstone_api  |           [Email] nvarchar(100) NOT NULL,
+capstone_api  |           [TeamId] int NULL,
+capstone_api  |           CONSTRAINT [PK_Students] PRIMARY KEY ([Id]),
+capstone_api  |           CONSTRAINT [FK_Students_Teams_TeamId] FOREIGN KEY ([TeamId]) REFERENCES [Teams] ([Id]) ON DELETE SET NULL
+capstone_api  |       );
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       CREATE INDEX [IX_SlotLecturers_LecturerId] ON [SlotLecturers] ([LecturerId]);
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       CREATE INDEX [IX_SlotTopics_TopicId] ON [SlotTopics] ([TopicId]);
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       CREATE INDEX [IX_Students_TeamId] ON [Students] ([TeamId]);
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       CREATE UNIQUE INDEX [IX_Teams_TopicId] ON [Teams] ([TopicId]);
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       CREATE INDEX [IX_Topics_LecturerId] ON [Topics] ([LecturerId]);
+capstone_api  | warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+capstone_api  |       Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://+:5000'.
+capstone_api  | info: Microsoft.Hosting.Lifetime[14]
+capstone_api  |       Now listening on: http://[::]:5000
+capstone_api  | info: Microsoft.Hosting.Lifetime[0]
+capstone_api  |       Application started. Press Ctrl+C to shut down.
+capstone_api  | info: Microsoft.Hosting.Lifetime[0]
+capstone_api  |       Hosting environment: Production
+capstone_api  | info: Microsoft.Hosting.Lifetime[0]
+capstone_api  |       Content root path: /app
+capstone_api  | warn: Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3]
+capstone_api  |       Failed to determine the https port for redirect.
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (66ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT [s].[Id], [s].[EndTime], [s].[RegistrationDeadline], [s].[ReviewRound], [s].[Room], [s].[StartTime]
+capstone_api  |       FROM [Slots] AS [s]
+capstone_api  |       WHERE (
+capstone_api  |           SELECT COUNT(*)
+capstone_api  |           FROM [SlotTopics] AS [s0]
+capstone_api  |           WHERE [s].[Id] = [s0].[SlotId]) < 3 OR (
+capstone_api  |           SELECT COUNT(*)
+capstone_api  |           FROM [SlotLecturers] AS [s1]
+capstone_api  |           WHERE [s].[Id] = [s1].[SlotId]) < 2
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (35ms) [Parameters=[@__teamId_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT TOP(1) [t].[Id], [t].[LeaderId], [t].[TeamName], [t].[TopicId]
+capstone_api  |       FROM [Teams] AS [t]
+capstone_api  |       WHERE [t].[Id] = @__teamId_0
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[@__teamId_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT TOP(1) [t].[Id], [t].[LeaderId], [t].[TeamName], [t].[TopicId]
+capstone_api  |       FROM [Teams] AS [t]
+capstone_api  |       WHERE [t].[Id] = @__teamId_0
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[@__teamId_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT TOP(1) [t].[Id], [t].[LeaderId], [t].[TeamName], [t].[TopicId]
+capstone_api  |       FROM [Teams] AS [t]
+capstone_api  |       WHERE [t].[Id] = @__teamId_0
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (3ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT TOP(1) [l].[Id], [l].[Email], [l].[FullName], [l].[MaxSlot], [l].[MinSlot]
+capstone_api  |       FROM [Lecturers] AS [l]
+capstone_api  |       WHERE [l].[Id] = @__id_0
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT TOP(1) [l].[Id], [l].[Email], [l].[FullName], [l].[MaxSlot], [l].[MinSlot]
+capstone_api  |       FROM [Lecturers] AS [l]
+capstone_api  |       WHERE [l].[Id] = @__id_0
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT TOP(1) [l].[Id], [l].[Email], [l].[FullName], [l].[MaxSlot], [l].[MinSlot]
+capstone_api  |       FROM [Lecturers] AS [l]
+capstone_api  |       WHERE [l].[Id] = @__id_0
+capstone_api  | warn: Microsoft.EntityFrameworkCore.Query[20504]
+capstone_api  |       Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (30ms) [Parameters=[@__reviewRound_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT [s].[Id], [s].[EndTime], [s].[RegistrationDeadline], [s].[ReviewRound], [s].[Room], [s].[StartTime], [t].[SlotId], [t].[LecturerId], [t].[Id], [t].[Email], [t].[FullName], [t].[MaxSlot], [t].[MinSlot], [t0].[SlotId], [t0].[TopicId], [t0].[Id], [t0].[Description], [t0].[LecturerId], [t0].[Title]
+capstone_api  |       FROM [Slots] AS [s]
+capstone_api  |       LEFT JOIN (
+capstone_api  |           SELECT [s0].[SlotId], [s0].[LecturerId], [l].[Id], [l].[Email], [l].[FullName], [l].[MaxSlot], [l].[MinSlot]
+capstone_api  |           FROM [SlotLecturers] AS [s0]
+capstone_api  |           INNER JOIN [Lecturers] AS [l] ON [s0].[LecturerId] = [l].[Id]
+capstone_api  |       ) AS [t] ON [s].[Id] = [t].[SlotId]
+capstone_api  |       LEFT JOIN (
+capstone_api  |           SELECT [s1].[SlotId], [s1].[TopicId], [t1].[Id], [t1].[Description], [t1].[LecturerId], [t1].[Title]
+capstone_api  |           FROM [SlotTopics] AS [s1]
+capstone_api  |           INNER JOIN [Topics] AS [t1] ON [s1].[TopicId] = [t1].[Id]
+capstone_api  |       ) AS [t0] ON [s].[Id] = [t0].[SlotId]
+capstone_api  |       WHERE [s].[ReviewRound] = @__reviewRound_0
+capstone_api  |       ORDER BY [s].[Id], [t].[SlotId], [t].[LecturerId], [t].[Id], [t0].[SlotId], [t0].[TopicId]
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT [l].[Id], [l].[Email], [l].[FullName], [l].[MaxSlot], [l].[MinSlot], [s].[SlotId], [s].[LecturerId]
+capstone_api  |       FROM [Lecturers] AS [l]
+capstone_api  |       LEFT JOIN [SlotLecturers] AS [s] ON [l].[Id] = [s].[LecturerId]
+capstone_api  |       ORDER BY [l].[Id], [s].[SlotId]
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[@__reviewRound_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT [s].[Id], [s].[EndTime], [s].[RegistrationDeadline], [s].[ReviewRound], [s].[Room], [s].[StartTime], [t].[SlotId], [t].[LecturerId], [t].[Id], [t].[Email], [t].[FullName], [t].[MaxSlot], [t].[MinSlot], [t0].[SlotId], [t0].[TopicId], [t0].[Id], [t0].[Description], [t0].[LecturerId], [t0].[Title]
+capstone_api  |       FROM [Slots] AS [s]
+capstone_api  |       LEFT JOIN (
+capstone_api  |           SELECT [s0].[SlotId], [s0].[LecturerId], [l].[Id], [l].[Email], [l].[FullName], [l].[MaxSlot], [l].[MinSlot]
+capstone_api  |           FROM [SlotLecturers] AS [s0]
+capstone_api  |           INNER JOIN [Lecturers] AS [l] ON [s0].[LecturerId] = [l].[Id]
+capstone_api  |       ) AS [t] ON [s].[Id] = [t].[SlotId]
+capstone_api  |       LEFT JOIN (
+capstone_api  |           SELECT [s1].[SlotId], [s1].[TopicId], [t1].[Id], [t1].[Description], [t1].[LecturerId], [t1].[Title]
+capstone_api  |           FROM [SlotTopics] AS [s1]
+capstone_api  |           INNER JOIN [Topics] AS [t1] ON [s1].[TopicId] = [t1].[Id]
+capstone_api  |       ) AS [t0] ON [s].[Id] = [t0].[SlotId]
+capstone_api  |       WHERE [s].[ReviewRound] = @__reviewRound_0
+capstone_api  |       ORDER BY [s].[Id], [t].[SlotId], [t].[LecturerId], [t].[Id], [t0].[SlotId], [t0].[TopicId]
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT [s].[Id], [s].[EndTime], [s].[RegistrationDeadline], [s].[ReviewRound], [s].[Room], [s].[StartTime]
+capstone_api  |       FROM [Slots] AS [s]
+capstone_api  |       WHERE (
+capstone_api  |           SELECT COUNT(*)
+capstone_api  |           FROM [SlotTopics] AS [s0]
+capstone_api  |           WHERE [s].[Id] = [s0].[SlotId]) < 3 OR (
+capstone_api  |           SELECT COUNT(*)
+capstone_api  |           FROM [SlotLecturers] AS [s1]
+capstone_api  |           WHERE [s].[Id] = [s1].[SlotId]) < 2
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[@__teamId_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT TOP(1) [t].[Id], [t].[LeaderId], [t].[TeamName], [t].[TopicId]
+capstone_api  |       FROM [Teams] AS [t]
+capstone_api  |       WHERE [t].[Id] = @__teamId_0
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[@__teamId_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT TOP(1) [t].[Id], [t].[LeaderId], [t].[TeamName], [t].[TopicId]
+capstone_api  |       FROM [Teams] AS [t]
+capstone_api  |       WHERE [t].[Id] = @__teamId_0
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[@__teamId_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT TOP(1) [t].[Id], [t].[LeaderId], [t].[TeamName], [t].[TopicId]
+capstone_api  |       FROM [Teams] AS [t]
+capstone_api  |       WHERE [t].[Id] = @__teamId_0
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT TOP(1) [l].[Id], [l].[Email], [l].[FullName], [l].[MaxSlot], [l].[MinSlot]
+capstone_api  |       FROM [Lecturers] AS [l]
+capstone_api  |       WHERE [l].[Id] = @__id_0
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (3ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT TOP(1) [l].[Id], [l].[Email], [l].[FullName], [l].[MaxSlot], [l].[MinSlot]
+capstone_api  |       FROM [Lecturers] AS [l]
+capstone_api  |       WHERE [l].[Id] = @__id_0
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT TOP(1) [l].[Id], [l].[Email], [l].[FullName], [l].[MaxSlot], [l].[MinSlot]
+capstone_api  |       FROM [Lecturers] AS [l]
+capstone_api  |       WHERE [l].[Id] = @__id_0
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[@__reviewRound_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT [s].[Id], [s].[EndTime], [s].[RegistrationDeadline], [s].[ReviewRound], [s].[Room], [s].[StartTime], [t].[SlotId], [t].[LecturerId], [t].[Id], [t].[Email], [t].[FullName], [t].[MaxSlot], [t].[MinSlot], [t0].[SlotId], [t0].[TopicId], [t0].[Id], [t0].[Description], [t0].[LecturerId], [t0].[Title]
+capstone_api  |       FROM [Slots] AS [s]
+capstone_api  |       LEFT JOIN (
+capstone_api  |           SELECT [s0].[SlotId], [s0].[LecturerId], [l].[Id], [l].[Email], [l].[FullName], [l].[MaxSlot], [l].[MinSlot]
+capstone_api  |           FROM [SlotLecturers] AS [s0]
+capstone_api  |           INNER JOIN [Lecturers] AS [l] ON [s0].[LecturerId] = [l].[Id]
+capstone_api  |       ) AS [t] ON [s].[Id] = [t].[SlotId]
+capstone_api  |       LEFT JOIN (
+capstone_api  |           SELECT [s1].[SlotId], [s1].[TopicId], [t1].[Id], [t1].[Description], [t1].[LecturerId], [t1].[Title]
+capstone_api  |           FROM [SlotTopics] AS [s1]
+capstone_api  |           INNER JOIN [Topics] AS [t1] ON [s1].[TopicId] = [t1].[Id]
+capstone_api  |       ) AS [t0] ON [s].[Id] = [t0].[SlotId]
+capstone_api  |       WHERE [s].[ReviewRound] = @__reviewRound_0
+capstone_api  |       ORDER BY [s].[Id], [t].[SlotId], [t].[LecturerId], [t].[Id], [t0].[SlotId], [t0].[TopicId]
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT [l].[Id], [l].[Email], [l].[FullName], [l].[MaxSlot], [l].[MinSlot], [s].[SlotId], [s].[LecturerId]
+capstone_api  |       FROM [Lecturers] AS [l]
+capstone_api  |       LEFT JOIN [SlotLecturers] AS [s] ON [l].[Id] = [s].[LecturerId]
+capstone_api  |       ORDER BY [l].[Id], [s].[SlotId]
+capstone_api  | info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+capstone_api  |       Executed DbCommand (2ms) [Parameters=[@__reviewRound_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+capstone_api  |       SELECT [s].[Id], [s].[EndTime], [s].[RegistrationDeadline], [s].[ReviewRound], [s].[Room], [s].[StartTime], [t].[SlotId], [t].[LecturerId], [t].[Id], [t].[Email], [t].[FullName], [t].[MaxSlot], [t].[MinSlot], [t0].[SlotId], [t0].[TopicId], [t0].[Id], [t0].[Description], [t0].[LecturerId], [t0].[Title]
+capstone_api  |       FROM [Slots] AS [s]
+capstone_api  |       LEFT JOIN (
+capstone_api  |           SELECT [s0].[SlotId], [s0].[LecturerId], [l].[Id], [l].[Email], [l].[FullName], [l].[MaxSlot], [l].[MinSlot]
+capstone_api  |           FROM [SlotLecturers] AS [s0]
+capstone_api  |           INNER JOIN [Lecturers] AS [l] ON [s0].[LecturerId] = [l].[Id]
+capstone_api  |       ) AS [t] ON [s].[Id] = [t].[SlotId]
+capstone_api  |       LEFT JOIN (
+capstone_api  |           SELECT [s1].[SlotId], [s1].[TopicId], [t1].[Id], [t1].[Description], [t1].[LecturerId], [t1].[Title]
+capstone_api  |           FROM [SlotTopics] AS [s1]
+capstone_api  |           INNER JOIN [Topics] AS [t1] ON [s1].[TopicId] = [t1].[Id]
+capstone_api  |       ) AS [t0] ON [s].[Id] = [t0].[SlotId]
+capstone_api  |       WHERE [s].[ReviewRound] = @__reviewRound_0
+capstone_api  |       ORDER BY [s].[Id], [t].[SlotId], [t].[LecturerId], [t].[Id], [t0].[SlotId], [t0].[TopicId]
