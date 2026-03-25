@@ -99,4 +99,28 @@ public class BookingService : IBookingService
 
         await _unitOfWork.SaveChangesAsync();
     }
+
+    public async Task CreateSlotAsync(CreateSlotDto request)
+    {
+        if (request.EndTime <= request.StartTime)
+            throw new BusinessRuleException("EndTime must be greater than StartTime.");
+
+        if (request.RegistrationDeadline > request.StartTime)
+            throw new BusinessRuleException("RegistrationDeadline must be before StartTime.");
+
+        var slot = new Slot
+        {
+            ReviewRound = request.ReviewRound,
+            StartTime = request.StartTime,
+            EndTime = request.EndTime,
+            Room = request.Room,
+            RegistrationDeadline = request.RegistrationDeadline
+        };
+
+        // Using direct context since SlotRepository lacks Add method
+        // Wait, does SlotRepository have Add? I will add it using DbContext temporarily or use _unitOfWork if it has methods
+        // Better yet, just add AddSlot(Slot slot) to ISlotRepository
+        _unitOfWork.Slots.AddSlot(slot);
+        await _unitOfWork.SaveChangesAsync();
+    }
 }

@@ -12,3 +12,4 @@ C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\obj\
 C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\obj\Debug\net10.0\CapstoneReview.Repository.pdb
 C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\obj\Debug\net10.0\CapstoneReview.Repository.genruntimeconfig.cache
 C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\obj\Debug\net10.0\ref\CapstoneReview.Repository.dll
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Repository\obj\Debug\net10.0\CapstoneReview.Repository.sourcelink.json

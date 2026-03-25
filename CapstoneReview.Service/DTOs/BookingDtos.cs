@@ -26,3 +26,12 @@ public class ModeratorConfigLecturerRequest
     public int MinSlot { get; set; }
     public int MaxSlot { get; set; }
 }
+
+public class CreateSlotDto
+{
+    public int ReviewRound { get; set; }
+    public System.DateTime StartTime { get; set; }
+    public System.DateTime EndTime { get; set; }
+    public string Room { get; set; } = string.Empty;
+    public System.DateTime RegistrationDeadline { get; set; }
+}

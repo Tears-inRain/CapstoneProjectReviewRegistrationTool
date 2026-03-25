@@ -25,6 +25,7 @@ public class SlotRepository : ISlotRepository
                 .ThenInclude(sl => sl.Lecturer)
             .Include(s => s.SlotTopics)
                 .ThenInclude(st => st.Topic)
+                    .ThenInclude(t => t.Team)
             .ToListAsync();
     }
 
@@ -41,6 +42,11 @@ public class SlotRepository : ISlotRepository
     public void AddSlotLecturer(SlotLecturer slotLecturer)
     {
         _context.SlotLecturers.Add(slotLecturer);
+    }
+
+    public void AddSlot(Slot slot)
+    {
+        _context.Slots.Add(slot);
     }
 
     public Task<Slot?> GetSlotByIdAsync(int slotId)

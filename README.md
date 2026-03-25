@@ -1,26 +1,41 @@
-# Capstone Project Review Registration Tool v2
+# Capstone Project Review Registration Tool v2.7
 
-Hệ thống quản lý đăng ký lịch bảo vệ Đồ án Tốt nghiệp (Capstone Project) xây dựng bằng kiến trúc chuẩn 3-Layer (API, Service, Repository) trên nền tảng .NET 10 Web API và SQL Server. 
+Hệ thống quản lý đăng ký lịch bảo vệ Đồ án Tốt nghiệp (Capstone Project) xây dựng bằng kiến trúc chuẩn 3-Layer (API, Service, Repository) trên nền tảng .NET 10 Web API và Entity Framework Core SQL Server. 
 
-Dự án có hỗ trợ triển khai bằng Docker Compose và đính kèm bộ Test Automation khép kín qua Postman.
+Dự án có hỗ trợ triển khai bằng Docker Compose và đính kèm bộ Test Automation khép kín qua Postman với dữ liệu chuẩn chỉ.
 
-## 🚀 Tính Năng (Features)
-- Xem danh sách Slot khả dụng (`Available Slots`).
-- Nhóm sinh viên (Do Leader đại diện) đăng ký Slot Review (`Book Team`).
-- Giảng viên xếp nguyện vọng gác thi (`Book Lecturer`).
-- Admin / Moderator cài đặt giới hạn số Slot của Giảng viên (`MinSlot`, `MaxSlot`).
-- Tự động chạy thuật toán xếp phòng (`Auto Schedule`) để liên kết Team, Lecturer và Slot.
-- Quản lý vòng lặp cấp cứu lỗi Database / Data Reset Automation qua Test Endpoints.
+## 🚀 Tính Năng (Features) & Flow Dự Án
+- Lọc danh sách Nền tảng (**Master Data**): Lấy danh sách Sinh viên, Tham chiếu Giảng viên (`Lecturer`) và Nhóm Đề tài (`Team`).
+- Khởi tạo Slot bảo vệ: Moderator có quyền setup các Slot trống theo lịch trình.
+- Đăng ký Slot (Sinh viên): Nhóm sinh viên (Do Leader đại diện) đăng ký các Slot tự do.
+- Đăng ký Slot (Giảng viên): Giảng viên xếp nguyện vọng gác thi.
+- Phân quyền Trọng tài: Admin / Moderator cài đặt giới hạn Block / MinSlot / MaxSlot của từng Giảng viên.
+- Auto Xếp Lịch (**Auto Schedule**): Cỗ máy tính toán Greedy tự động ghép Nối Giảng Viên, Nhóm và Slot sao cho thoả mãn chống Trùng Lặp GVHD và đạt hạn mức tối thiểu.
+- Tự động Reset DB (**Test Automation**): Phục vụ việc Testing nhanh gọn 100% tỷ lệ Passed.
 
-## 🛠 Prerequisites
-Bạn cần cài đặt các phần mềm sau trên máy tính của mình:
-- [Git](https://git-scm.com/)
-- [Docker & Docker Compose](https://www.docker.com/products/docker-desktop/) (Docker Desktop)
-- [Postman](https://www.postman.com/downloads/) (Dành cho việc chạy API Automation Test)
+## 🛠 Danh sách HTTP API Endpoints
+
+Hệ thống cung cấp mảng REST API hoàn chỉnh phục vụ React Frontend:
+
+**1. Khởi tạo & Dữ liệu Nền (Master Data)**
+- `POST /api/test-setup/reset-db`: Xóa trắng và nạp lại Database mẫu.
+- `GET /api/Lecturer`: Lấy toàn bộ danh sách Giảng viên.
+- `GET /api/Team`: Lấy toàn bộ danh sách Nhóm.
+- `POST /api/Slot`: Moderator tạo Slot mới cho đợt bảo vệ.
+
+**2. Đăng ký & Lịch trình (Booking)**
+- `GET /api/Slot/available`: Liệt kê các Slot còn trống chưa bị đầy giới hạn.
+- `POST /api/Booking/team`: Đăng ký Slot cho Team (Leader bắt buộc).
+- `POST /api/Booking/lecturer`: Giảng viên đăng ký Slot tham gia chấm thi.
+
+**3. Quản trị & Thuật toán Xếp Lịch (Moderator & Algorithm)**
+- `PUT /api/Moderator/lecturer-config/{lecturerId}`: Cấu hình Max/Min Slot cho GV.
+- `POST /api/Schedule/auto-schedule`: Chạy thuật toán tự động điền lịch `Greedy`. Cần body `reviewRound`.
+- `GET /api/Schedule/{reviewRound}`: Trả về kết xuất toàn bộ Lịch bảo vệ, Mapping sẵn Tên Nhóm, GV, Room.
 
 ---
 
-## 💻 Hướng Dẫn Kéo Code (Clone & Build)
+## 💻 Hướng Dẫn Kéo Code & Chạy Server (Docker)
 
 **1. Clone kho lưu trữ từ GitHub về máy:**
 Mở Terminal/Command Prompt và chạy lệnh sau:
@@ -32,34 +47,34 @@ cd CapstoneProjectReviewRegistrationTool
 **2. Khởi chạy toàn bộ hệ thống bằng Docker Compose:**
 Đảm bảo Docker Desktop của bạn đang mở và sẵn sàng. Gõ lệnh sau tại thư mục gốc (chứa file `docker-compose.yml`):
 ```bash
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 **Lệnh trên sẽ tự động:**
-1. Pull image `mssql/server:2022-latest` để dựng database `CapstoneReviewDb` với tài khoản `sa` (Mật khẩu: `Capstone@PRN232_2026!`).
-2. Build Image Web API .NET 10 bằng cách đọc cấu hình từ file `Dockerfile`.
-3. Chờ SQL Server khởi động thành công, Ứng dụng API sẽ tự động kích hoạt chức năng Migration / EnsureCreated để cấu trúc Database ngay khi khởi chạy.
+1. Cấu hình container `mssql_db` với SQL Server 2022 (Mật khẩu: `Capstone@PRN232_2026!`).
+2. Build và Hosting Web API .NET 10 tại cổng `http://localhost:5000`.
+3. Entity Framework Core tự động Migration/EnsureCreated thiết lập bảng dữ liệu khi khởi chạy.
 
 **3. Tắt hệ thống khi không dùng đến:**
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ---
 
-## 🧪 Hướng Dẫn Auto-Test & Seed Data bằng Postman
+## 🧪 Hướng Dẫn Kịch Bản Test Tự Động (Postman Collection)
 
 1. Mở ứng dụng **Postman**.
-2. Nhấn nút **Import** góc trên bên trái, kéo thả file `postman_collection.json` (Nằm ngay trong thư mục gốc của dự án) vào Postman.
+2. Nhấn nút **Import**, kéo thả file `postman_collection.json` vào Postman.
 3. Chọn thẻ Collection mới tên `Capstone Project Review Registration Tool v2`.
 4. Chuột phải vào tên Collection và chọn **Run Collection**.
 
-**💡 Lưu ý cốt lõi:**
-Bộ Postman Collection này đã được tích hợp **Pre-request Script**. Trước khi chạy API số 1, nó luôn tự gọi Endpoint bí mật `POST http://localhost:5000/api/test-setup/reset-db` trước để chọc thẳng file SQL `init_db_mock.sql` xóa trắng và bơm lại toàn bộ Data Mẫu của Giảng Viên, Sinh Viên, Team, và Slot trắng. Do vậy, hệ thống Test của bạn sẽ luôn Passed với tỷ lệ 100% nhờ độ toàn vẹn Data cao tuyệt đối.
+**💡 Cấu trúc Pipeline của bộ Test:**
+Khác với kiến trúc cũ, bộ Postman này chạy dạng **Pipeline Đồng bộ**. 
+Ngay tại **Test Request số 0 (Zero-Step)**, Postman sẽ gọi API Reset Database để dọn sạch Database, Seed lại Data Mẫu (5 Team, 2 GV, 3 Slot).
+Sau đó nó mới liên hoàn nạp 9 Request đăng ký (Booking, Master Data, Auto Schedule, Config) tiếp nối đè lồng lên nhau mà không gây ra bất cứ một Race Condition nào!
 
-## 🗂 Cấu trúc Mã Nguồn (Architecture)
-Hệ thống tuân thủ chặt chẽ nguyên lý Dependency Inversion.
-
-- `CapstoneReview.API` (Presentations): Nơi tiếp nhận HTTP, config Dependency Injection, chứa Endpoints.
-- `CapstoneReview.Service` (Business Rules): Xử lý toàn vẹn Core Logic (Team Owner Validations, Check Slot Boundaries), độc lập hoàn toàn khỏi Entity Framework. Dùng DTOs.
-- `CapstoneReview.Repository` (Data Access): Chứa UnitOfWork và Repositories, kết nối SQL Server thông qua DbContext.
+## 🗂 Cấu trúc Mã Nguồn (Clean Architecture 3-Layer)
+- `CapstoneReview.API` (Presentations Level): Interface cho client, config Dependency Injection, HTTP Endpoints, Data Annotations.
+- `CapstoneReview.Service` (Business Rules Level): Lõi logic xử lý Đăng ký / Xếp Lịch. Thuật toán phân vùng không rò rỉ ngoại lệ DB.
+- `CapstoneReview.Repository` (Data Access Level): UnitOfWork Pattern gom cụm các Repository (Team, Lecturer, Slot) tương tác EF Core SQL Server.

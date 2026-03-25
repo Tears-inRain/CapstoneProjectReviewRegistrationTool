@@ -9,6 +9,7 @@ public interface ISlotRepository
     Task<List<Slot>> GetSlotsByRoundWithDetailsAsync(int reviewRound);
     Task<Slot?> GetSlotByIdWithDetailsAsync(int slotId);
     void AddSlotLecturer(SlotLecturer slotLecturer);
+    void AddSlot(Slot slot);
     Task<Slot?> GetSlotByIdAsync(int slotId);
     Task<List<Slot>> GetAvailableSlotsAsync();
     Task AddSlotTopicsAsync(List<SlotTopic> slotTopics);
