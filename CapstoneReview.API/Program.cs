@@ -33,6 +33,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // Register Services
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IMasterDataService, MasterDataService>();
 
 var app = builder.Build();
 

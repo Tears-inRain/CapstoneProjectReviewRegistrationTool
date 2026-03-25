@@ -13,3 +13,4 @@ C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\obj\Deb
 C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\obj\Debug\net10.0\refint\CapstoneReview.Service.dll
 C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\obj\Debug\net10.0\CapstoneReview.Service.pdb
 C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\obj\Debug\net10.0\ref\CapstoneReview.Service.dll
+C:\projects\CapstoneProjectReviewRegistrationTool\CapstoneReview.Service\obj\Debug\net10.0\CapstoneReview.Service.sourcelink.json

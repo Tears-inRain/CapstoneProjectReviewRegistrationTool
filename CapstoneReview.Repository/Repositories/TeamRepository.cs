@@ -9,6 +9,7 @@ public class TeamRepository : ITeamRepository
 {
     private readonly ApplicationDbContext _context;
     public TeamRepository(ApplicationDbContext context) => _context = context;
+    public Task<List<Team>> GetAllTeamsAsync() => _context.Teams.ToListAsync();
     public Task<Team?> GetTeamByIdAsync(int teamId) => _context.Teams.FirstOrDefaultAsync(t => t.Id == teamId);
     public async Task<Topic?> GetTopicByTeamIdAsync(int teamId)
     {

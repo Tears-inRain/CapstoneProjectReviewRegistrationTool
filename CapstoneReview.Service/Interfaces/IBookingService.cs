@@ -10,4 +10,5 @@ public interface IBookingService
     Task BookTeamAsync(TeamBookingRequest request);
     Task BookLecturerAsync(LecturerBookingRequest request);
     Task ConfigureLecturerAsync(int lecturerId, ModeratorConfigLecturerRequest request);
+    Task CreateSlotAsync(CreateSlotDto request);
 }

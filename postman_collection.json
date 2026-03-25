@@ -1,433 +1,572 @@
-{
-  "info": {
-    "name": "Capstone Project Review Registration Tool v2",
-    "description": "TDD Lab & Automation Test Collection Phase 2.6 - Full Cases, Strict Schemas & Assertions",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "event": [
-    {
-      "listen": "prerequest",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          "pm.sendRequest({",
-          "    url: pm.environment.get('baseUrl') + '/api/test-setup/reset-db',",
-          "    method: 'POST'",
-          "}, function (err, res) {",
-          "    if (!err) {",
-          "        console.log('DB Reset OK', res.json());",
-          "    }",
-          "});"
-        ]
-      }
-    }
-  ],
-  "item": [
-    {
-      "name": "1. Available Slots (Happy Case)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
-              "",
-              "var schema = {",
-              "  \"type\": \"array\",",
-              "  \"items\": {",
-              "    \"type\": \"object\",",
-              "    \"required\": [\"slotId\", \"startTime\", \"endTime\", \"room\"],",
-              "    \"properties\": {",
-              "      \"slotId\": { \"type\": \"integer\" },",
-              "      \"startTime\": { \"type\": \"string\" },",
-              "      \"endTime\": { \"type\": \"string\" },",
-              "      \"room\": { \"type\": \"string\" }",
-              "    },",
-              "    \"additionalProperties\": false",
-              "  }",
-              "};",
-              "",
-              "pm.test('Response match JSON Schema', function () { pm.response.to.have.jsonSchema(schema); });",
-              "pm.test('Mỗi slot không được vượt quá 3 topics hoặc 2 reviewers', function () {",
-              "    var jsonData = pm.response.json();",
-              "    jsonData.forEach(slot => {",
-              "        if(slot.topics) pm.expect(slot.topics.length).to.be.at.most(3);",
-              "        if(slot.reviewers) pm.expect(slot.reviewers.length).to.be.at.most(2);",
-              "    });",
-              "});"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "GET",
-        "url": "{{baseUrl}}/api/Slot/available"
-      }
-    },
-    {
-      "name": "2.1 Book Team (Happy Case)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
-              "",
-              "var schema = {",
-              "  \"type\": \"object\",",
-              "  \"required\": [\"message\"],",
-              "  \"properties\": {",
-              "    \"message\": { \"type\": \"string\" }",
-              "  },",
-              "  \"additionalProperties\": false",
-              "};",
-              "",
-              "pm.test('Response match JSON Schema', function () { pm.response.to.have.jsonSchema(schema); });"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": { "mode": "raw", "raw": "{\n  \"teamId\": 1,\n  \"leaderId\": 1,\n  \"slotIds\": [1, 2]\n}" },
-        "url": "{{baseUrl}}/api/Booking/team"
-      }
-    },
-    {
-      "name": "2.2 Book Team (Unhappy Case - Wrong Leader)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
-              "",
-              "var schema = {",
-              "  \"type\": \"object\",",
-              "  \"required\": [\"error\"],",
-              "  \"properties\": {",
-              "    \"error\": { \"type\": \"string\" }",
-              "  },",
-              "  \"additionalProperties\": false",
-              "};",
-              "",
-              "pm.test('Response match JSON Schema', function () { pm.response.to.have.jsonSchema(schema); });",
-              "pm.test('Error message includes leader validation', function () { var jsonData = pm.response.json(); pm.expect(jsonData.error.toLowerCase()).to.include('leader'); });"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": { "mode": "raw", "raw": "{\n  \"teamId\": 1,\n  \"leaderId\": 99,\n  \"slotIds\": [1]\n}" },
-        "url": "{{baseUrl}}/api/Booking/team"
-      }
-    },
-    {
-      "name": "2.3 Book Team (Unhappy Case - Team Not Found)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
-              "",
-              "var schema = {",
-              "  \"type\": \"object\",",
-              "  \"required\": [\"error\"],",
-              "  \"properties\": {",
-              "    \"error\": { \"type\": \"string\" }",
-              "  },",
-              "  \"additionalProperties\": false",
-              "};",
-              "",
-              "pm.test('Response match JSON Schema', function () { pm.response.to.have.jsonSchema(schema); });",
-              "pm.test('Error message indicates Team not found', function () { var jsonData = pm.response.json(); pm.expect(jsonData.error.toLowerCase()).to.include('team not found'); });"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": { "mode": "raw", "raw": "{\n  \"teamId\": 999,\n  \"leaderId\": 1,\n  \"slotIds\": [1]\n}" },
-        "url": "{{baseUrl}}/api/Booking/team"
-      }
-    },
-    {
-      "name": "3.1 Book Lecturer (Happy Case)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
-              "",
-              "var schema = {",
-              "  \"type\": \"object\",",
-              "  \"required\": [\"message\"],",
-              "  \"properties\": {",
-              "    \"message\": { \"type\": \"string\" }",
-              "  },",
-              "  \"additionalProperties\": false",
-              "};",
-              "",
-              "pm.test('Response match JSON Schema', function () { pm.response.to.have.jsonSchema(schema); });"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": { "mode": "raw", "raw": "{\n  \"lecturerId\": 1,\n  \"slotIds\": [1, 2]\n}" },
-        "url": "{{baseUrl}}/api/Booking/lecturer"
-      }
-    },
-    {
-      "name": "3.2 Book Lecturer (Unhappy Case - Lecturer Not Found)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
-              "",
-              "var schema = {",
-              "  \"type\": \"object\",",
-              "  \"required\": [\"error\"],",
-              "  \"properties\": {",
-              "    \"error\": { \"type\": \"string\" }",
-              "  },",
-              "  \"additionalProperties\": false",
-              "};",
-              "",
-              "pm.test('Response match JSON Schema', function () { pm.response.to.have.jsonSchema(schema); });"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": { "mode": "raw", "raw": "{\n  \"lecturerId\": 999,\n  \"slotIds\": [1]\n}" },
-        "url": "{{baseUrl}}/api/Booking/lecturer"
-      }
-    },
-    {
-      "name": "4.1 Config Moderator (Happy Case)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
-              "",
-              "var schema = {",
-              "  \"type\": \"object\",",
-              "  \"required\": [\"message\"],",
-              "  \"properties\": {",
-              "    \"message\": { \"type\": \"string\" }",
-              "  },",
-              "  \"additionalProperties\": false",
-              "};",
-              "",
-              "pm.test('Response match JSON Schema', function () { pm.response.to.have.jsonSchema(schema); });"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "PUT",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": { "mode": "raw", "raw": "{\n  \"minSlot\": 1,\n  \"maxSlot\": 5\n}" },
-        "url": "{{baseUrl}}/api/Moderator/lecturer-config/1"
-      }
-    },
-    {
-      "name": "4.2 Config Moderator (Unhappy Case - MinSlot < 0)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
-              "",
-              "var schema = {",
-              "  \"type\": \"object\",",
-              "  \"required\": [\"error\"],",
-              "  \"properties\": {",
-              "    \"error\": { \"type\": \"string\" }",
-              "  },",
-              "  \"additionalProperties\": false",
-              "};",
-              "",
-              "pm.test('Response match JSON Schema', function () { pm.response.to.have.jsonSchema(schema); });",
-              "pm.test('Error contains minSlot validation', function () { var jsonData = pm.response.json(); pm.expect(jsonData.error.toLowerCase()).to.include('minslot'); });"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "PUT",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": { "mode": "raw", "raw": "{\n  \"minSlot\": -1,\n  \"maxSlot\": 5\n}" },
-        "url": "{{baseUrl}}/api/Moderator/lecturer-config/1"
-      }
-    },
-    {
-      "name": "4.3 Config Moderator (Unhappy Case - Max < Min)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
-              "",
-              "var schema = {",
-              "  \"type\": \"object\",",
-              "  \"required\": [\"error\"],",
-              "  \"properties\": {",
-              "    \"error\": { \"type\": \"string\" }",
-              "  },",
-              "  \"additionalProperties\": false",
-              "};",
-              "",
-              "pm.test('Response match JSON Schema', function () { pm.response.to.have.jsonSchema(schema); });",
-              "pm.test('Error contains maxSlot validation', function () { var jsonData = pm.response.json(); pm.expect(jsonData.error.toLowerCase()).to.include('maxslot'); });"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "PUT",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": { "mode": "raw", "raw": "{\n  \"minSlot\": 5,\n  \"maxSlot\": 2\n}" },
-        "url": "{{baseUrl}}/api/Moderator/lecturer-config/1"
-      }
-    },
-    {
-      "name": "5. Auto Schedule (Happy Case)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
-              "",
-              "var schema = {",
-              "  \"type\": \"object\",",
-              "  \"required\": [\"message\"],",
-              "  \"properties\": {",
-              "    \"message\": { \"type\": \"string\" }",
-              "  },",
-              "  \"additionalProperties\": false",
-              "};",
-              "",
-              "pm.test('Response match JSON Schema', function () { pm.response.to.have.jsonSchema(schema); });"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": { "mode": "raw", "raw": "{\n  \"reviewRoundId\": 1\n}" },
-        "url": "{{baseUrl}}/api/Schedule/auto-schedule"
-      }
-    },
-    {
-      "name": "6. Get Schedule by Round (Happy Case)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
-              "var schema = {",
-              "  \"type\": \"array\",",
-              "  \"items\": {",
-              "    \"type\": \"object\",",
-              "    \"required\": [\"slotId\", \"room\", \"startTime\", \"endTime\", \"reviewers\", \"topics\"],",
-              "    \"properties\": {",
-              "      \"slotId\": { \"type\": \"integer\" },",
-              "      \"room\": { \"type\": \"string\" },",
-              "      \"startTime\": { \"type\": \"string\" },",
-              "      \"endTime\": { \"type\": \"string\" },",
-              "      \"reviewers\": {",
-              "        \"type\": \"array\",",
-              "        \"minItems\": 2,",
-              "        \"maxItems\": 2,",
-              "        \"items\": {",
-              "          \"type\": \"object\",",
-              "          \"required\": [\"lecturerId\", \"fullName\", \"email\"],",
-              "          \"properties\": {",
-              "            \"lecturerId\": { \"type\": \"integer\" },",
-              "            \"fullName\": { \"type\": \"string\" },",
-              "            \"email\": { \"type\": \"string\" }",
-              "          }",
-              "        }",
-              "      },",
-              "      \"topics\": {",
-              "        \"type\": \"array\",",
-              "        \"maxItems\": 3,",
-              "        \"items\": {",
-              "          \"type\": \"object\",",
-              "          \"required\": [\"topicId\", \"title\", \"teamId\", \"teamName\", \"instructorId\", \"instructorName\"],",
-              "          \"properties\": {",
-              "            \"topicId\": { \"type\": \"integer\" },",
-              "            \"title\": { \"type\": \"string\" },",
-              "            \"teamId\": { \"type\": \"integer\" },",
-              "            \"teamName\": { \"type\": \"string\" },",
-              "            \"instructorId\": { \"type\": \"integer\" },",
-              "            \"instructorName\": { \"type\": \"string\" }",
-              "          }",
-              "        }",
-              "      }",
-              "    }",
-              "  }",
-              "};",
-              "pm.test('Response match JSON Schema (Structure & Boundaries)', function () { pm.response.to.have.jsonSchema(schema); });",
-              "pm.test('Mỗi slot có tối đa 3 đề tài', function () {",
-              "    var jsonData = pm.response.json();",
-              "    jsonData.forEach(slot => {",
-              "        if (slot.topics) pm.expect(slot.topics.length).to.be.at.most(3);",
-              "    });",
-              "});",
-              "pm.test('Mỗi slot phải có đúng 2 GV Review', function () {",
-              "    var jsonData = pm.response.json();",
-              "    jsonData.forEach(slot => {",
-              "        if (slot.reviewers) pm.expect(slot.reviewers.length).to.eql(2);",
-              "    });",
-              "});"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "GET",
-        "url": "{{baseUrl}}/api/Schedule/1"
-      }
-    }
-  ],
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:5000",
-      "type": "string"
-    }
-  ]
+﻿{
+    "info":  {
+                 "name":  "Capstone Project Review Registration Tool v2",
+                 "description":  "TDD Lab \u0026 Automation Test Collection Phase 2.6 - Full Cases, Strict Schemas \u0026 Assertions",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+             },
+    "item":  [
+                 {
+                     "name":  "0. Reset Database (Test Setup)",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Reset DB Successful\u0027, function () { pm.response.to.have.status(200); });"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "POST",
+                                     "url":  "{{baseUrl}}/api/test-setup/reset-db"
+                                 }
+                 },
+                 {
+                     "name":  "1. Available Slots (Happy Case)",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Status code is 200\u0027, function () { pm.response.to.have.status(200); });",
+                                                                   "",
+                                                                   "var schema = {",
+                                                                   "  \"type\": \"array\",",
+                                                                   "  \"items\": {",
+                                                                   "    \"type\": \"object\",",
+                                                                   "    \"required\": [\"slotId\", \"startTime\", \"endTime\", \"room\"],",
+                                                                   "    \"properties\": {",
+                                                                   "      \"slotId\": { \"type\": \"integer\" },",
+                                                                   "      \"startTime\": { \"type\": \"string\" },",
+                                                                   "      \"endTime\": { \"type\": \"string\" },",
+                                                                   "      \"room\": { \"type\": \"string\" }",
+                                                                   "    },",
+                                                                   "    \"additionalProperties\": false",
+                                                                   "  }",
+                                                                   "};",
+                                                                   "",
+                                                                   "pm.test(\u0027Response match JSON Schema\u0027, function () { pm.response.to.have.jsonSchema(schema); });",
+                                                                   "pm.test(\u0027Má»—i slot khÃ´ng Ä‘Æ°á»£c vÆ°á»£t quÃ¡ 3 topics hoáº·c 2 reviewers\u0027, function () {",
+                                                                   "    var jsonData = pm.response.json();",
+                                                                   "    jsonData.forEach(slot =\u003e {",
+                                                                   "        if(slot.topics) pm.expect(slot.topics.length).to.be.at.most(3);",
+                                                                   "        if(slot.reviewers) pm.expect(slot.reviewers.length).to.be.at.most(2);",
+                                                                   "    });",
+                                                                   "});"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  "{{baseUrl}}/api/Slot/available"
+                                 }
+                 },
+                 {
+                     "name":  "2.1 Book Team (Happy Case)",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Status code is 200\u0027, function () { pm.response.to.have.status(200); });",
+                                                                   "",
+                                                                   "var schema = {",
+                                                                   "  \"type\": \"object\",",
+                                                                   "  \"required\": [\"message\"],",
+                                                                   "  \"properties\": {",
+                                                                   "    \"message\": { \"type\": \"string\" }",
+                                                                   "  },",
+                                                                   "  \"additionalProperties\": false",
+                                                                   "};",
+                                                                   "",
+                                                                   "pm.test(\u0027Response match JSON Schema\u0027, function () { pm.response.to.have.jsonSchema(schema); });"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n  \"teamId\": 1,\n  \"leaderId\": 1,\n  \"slotIds\": [1, 2]\n}"
+                                              },
+                                     "url":  "{{baseUrl}}/api/Booking/team"
+                                 }
+                 },
+                 {
+                     "name":  "2.2 Book Team (Unhappy Case - Wrong Leader)",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Status code is 400\u0027, function () { pm.response.to.have.status(400); });",
+                                                                   "",
+                                                                   "var schema = {",
+                                                                   "  \"type\": \"object\",",
+                                                                   "  \"required\": [\"error\"],",
+                                                                   "  \"properties\": {",
+                                                                   "    \"error\": { \"type\": \"string\" }",
+                                                                   "  },",
+                                                                   "  \"additionalProperties\": false",
+                                                                   "};",
+                                                                   "",
+                                                                   "pm.test(\u0027Response match JSON Schema\u0027, function () { pm.response.to.have.jsonSchema(schema); });",
+                                                                   "pm.test(\u0027Error message includes leader validation\u0027, function () { var jsonData = pm.response.json(); pm.expect(jsonData.error.toLowerCase()).to.include(\u0027leader\u0027); });"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n  \"teamId\": 1,\n  \"leaderId\": 99,\n  \"slotIds\": [1]\n}"
+                                              },
+                                     "url":  "{{baseUrl}}/api/Booking/team"
+                                 }
+                 },
+                 {
+                     "name":  "2.3 Book Team (Unhappy Case - Team Not Found)",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Status code is 400\u0027, function () { pm.response.to.have.status(400); });",
+                                                                   "",
+                                                                   "var schema = {",
+                                                                   "  \"type\": \"object\",",
+                                                                   "  \"required\": [\"error\"],",
+                                                                   "  \"properties\": {",
+                                                                   "    \"error\": { \"type\": \"string\" }",
+                                                                   "  },",
+                                                                   "  \"additionalProperties\": false",
+                                                                   "};",
+                                                                   "",
+                                                                   "pm.test(\u0027Response match JSON Schema\u0027, function () { pm.response.to.have.jsonSchema(schema); });",
+                                                                   "pm.test(\u0027Error message indicates Team not found\u0027, function () { var jsonData = pm.response.json(); pm.expect(jsonData.error.toLowerCase()).to.include(\u0027team not found\u0027); });"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n  \"teamId\": 999,\n  \"leaderId\": 1,\n  \"slotIds\": [1]\n}"
+                                              },
+                                     "url":  "{{baseUrl}}/api/Booking/team"
+                                 }
+                 },
+                 {
+                     "name":  "3.1 Book Lecturer (Happy Case)",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Status code is 200\u0027, function () { pm.response.to.have.status(200); });",
+                                                                   "",
+                                                                   "var schema = {",
+                                                                   "  \"type\": \"object\",",
+                                                                   "  \"required\": [\"message\"],",
+                                                                   "  \"properties\": {",
+                                                                   "    \"message\": { \"type\": \"string\" }",
+                                                                   "  },",
+                                                                   "  \"additionalProperties\": false",
+                                                                   "};",
+                                                                   "",
+                                                                   "pm.test(\u0027Response match JSON Schema\u0027, function () { pm.response.to.have.jsonSchema(schema); });"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n  \"lecturerId\": 1,\n  \"slotIds\": [1, 2]\n}"
+                                              },
+                                     "url":  "{{baseUrl}}/api/Booking/lecturer"
+                                 }
+                 },
+                 {
+                     "name":  "3.2 Book Lecturer (Unhappy Case - Lecturer Not Found)",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Status code is 400\u0027, function () { pm.response.to.have.status(400); });",
+                                                                   "",
+                                                                   "var schema = {",
+                                                                   "  \"type\": \"object\",",
+                                                                   "  \"required\": [\"error\"],",
+                                                                   "  \"properties\": {",
+                                                                   "    \"error\": { \"type\": \"string\" }",
+                                                                   "  },",
+                                                                   "  \"additionalProperties\": false",
+                                                                   "};",
+                                                                   "",
+                                                                   "pm.test(\u0027Response match JSON Schema\u0027, function () { pm.response.to.have.jsonSchema(schema); });"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n  \"lecturerId\": 999,\n  \"slotIds\": [1]\n}"
+                                              },
+                                     "url":  "{{baseUrl}}/api/Booking/lecturer"
+                                 }
+                 },
+                 {
+                     "name":  "4.1 Config Moderator (Happy Case)",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Status code is 200\u0027, function () { pm.response.to.have.status(200); });",
+                                                                   "",
+                                                                   "var schema = {",
+                                                                   "  \"type\": \"object\",",
+                                                                   "  \"required\": [\"message\"],",
+                                                                   "  \"properties\": {",
+                                                                   "    \"message\": { \"type\": \"string\" }",
+                                                                   "  },",
+                                                                   "  \"additionalProperties\": false",
+                                                                   "};",
+                                                                   "",
+                                                                   "pm.test(\u0027Response match JSON Schema\u0027, function () { pm.response.to.have.jsonSchema(schema); });"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "PUT",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n  \"minSlot\": 1,\n  \"maxSlot\": 5\n}"
+                                              },
+                                     "url":  "{{baseUrl}}/api/Moderator/lecturer-config/1"
+                                 }
+                 },
+                 {
+                     "name":  "4.2 Config Moderator (Unhappy Case - MinSlot \u003c 0)",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Status code is 400\u0027, function () { pm.response.to.have.status(400); });",
+                                                                   "",
+                                                                   "var schema = {",
+                                                                   "  \"type\": \"object\",",
+                                                                   "  \"required\": [\"error\"],",
+                                                                   "  \"properties\": {",
+                                                                   "    \"error\": { \"type\": \"string\" }",
+                                                                   "  },",
+                                                                   "  \"additionalProperties\": false",
+                                                                   "};",
+                                                                   "",
+                                                                   "pm.test(\u0027Response match JSON Schema\u0027, function () { pm.response.to.have.jsonSchema(schema); });",
+                                                                   "pm.test(\u0027Error contains minSlot validation\u0027, function () { var jsonData = pm.response.json(); pm.expect(jsonData.error.toLowerCase()).to.include(\u0027minslot\u0027); });"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "PUT",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n  \"minSlot\": -1,\n  \"maxSlot\": 5\n}"
+                                              },
+                                     "url":  "{{baseUrl}}/api/Moderator/lecturer-config/1"
+                                 }
+                 },
+                 {
+                     "name":  "4.3 Config Moderator (Unhappy Case - Max \u003c Min)",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Status code is 400\u0027, function () { pm.response.to.have.status(400); });",
+                                                                   "",
+                                                                   "var schema = {",
+                                                                   "  \"type\": \"object\",",
+                                                                   "  \"required\": [\"error\"],",
+                                                                   "  \"properties\": {",
+                                                                   "    \"error\": { \"type\": \"string\" }",
+                                                                   "  },",
+                                                                   "  \"additionalProperties\": false",
+                                                                   "};",
+                                                                   "",
+                                                                   "pm.test(\u0027Response match JSON Schema\u0027, function () { pm.response.to.have.jsonSchema(schema); });",
+                                                                   "pm.test(\u0027Error contains maxSlot validation\u0027, function () { var jsonData = pm.response.json(); pm.expect(jsonData.error.toLowerCase()).to.include(\u0027maxslot\u0027); });"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "PUT",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n  \"minSlot\": 5,\n  \"maxSlot\": 2\n}"
+                                              },
+                                     "url":  "{{baseUrl}}/api/Moderator/lecturer-config/1"
+                                 }
+                 },
+                 {
+                     "name":  "5. Auto Schedule (Happy Case)",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Status code is 200\u0027, function () { pm.response.to.have.status(200); });",
+                                                                   "",
+                                                                   "var schema = {",
+                                                                   "  \"type\": \"object\",",
+                                                                   "  \"required\": [\"message\"],",
+                                                                   "  \"properties\": {",
+                                                                   "    \"message\": { \"type\": \"string\" }",
+                                                                   "  },",
+                                                                   "  \"additionalProperties\": false",
+                                                                   "};",
+                                                                   "",
+                                                                   "pm.test(\u0027Response match JSON Schema\u0027, function () { pm.response.to.have.jsonSchema(schema); });"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n  \"reviewRound\": 1\n}"
+                                              },
+                                     "url":  "{{baseUrl}}/api/Schedule/auto-schedule"
+                                 }
+                 },
+                 {
+                     "name":  "6. Get Schedule by Round (Happy Case)",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Status code is 200\u0027, function () { pm.response.to.have.status(200); });",
+                                                                   "var schema = {",
+                                                                   "  \"type\": \"array\",",
+                                                                   "  \"items\": {",
+                                                                   "    \"type\": \"object\",",
+                                                                   "    \"required\": [\"slotId\", \"room\", \"startTime\", \"endTime\", \"reviewers\", \"topics\"],",
+                                                                   "    \"properties\": {",
+                                                                   "      \"slotId\": { \"type\": \"integer\" },",
+                                                                   "      \"room\": { \"type\": \"string\" },",
+                                                                   "      \"startTime\": { \"type\": \"string\" },",
+                                                                   "      \"endTime\": { \"type\": \"string\" },",
+                                                                   "      \"reviewers\": {",
+                                                                   "        \"type\": \"array\",",
+                                                                   "        \"minItems\": 2,",
+                                                                   "        \"maxItems\": 2,",
+                                                                   "        \"items\": {",
+                                                                   "          \"type\": \"object\",",
+                                                                   "          \"required\": [\"lecturerId\", \"fullName\", \"email\"],",
+                                                                   "          \"properties\": {",
+                                                                   "            \"lecturerId\": { \"type\": \"integer\" },",
+                                                                   "            \"fullName\": { \"type\": \"string\" },",
+                                                                   "            \"email\": { \"type\": \"string\" }",
+                                                                   "          }",
+                                                                   "        }",
+                                                                   "      },",
+                                                                   "      \"topics\": {",
+                                                                   "        \"type\": \"array\",",
+                                                                   "        \"maxItems\": 3,",
+                                                                   "        \"items\": {",
+                                                                   "          \"type\": \"object\",",
+                                                                   "          \"required\": [\"topicId\", \"title\", \"teamId\", \"teamName\", \"instructorId\", \"instructorName\"],",
+                                                                   "          \"properties\": {",
+                                                                   "            \"topicId\": { \"type\": \"integer\" },",
+                                                                   "            \"title\": { \"type\": \"string\" },",
+                                                                   "            \"teamId\": { \"type\": \"integer\" },",
+                                                                   "            \"teamName\": { \"type\": \"string\" },",
+                                                                   "            \"instructorId\": { \"type\": \"integer\" },",
+                                                                   "            \"instructorName\": { \"type\": \"string\" }",
+                                                                   "          }",
+                                                                   "        }",
+                                                                   "      }",
+                                                                   "    }",
+                                                                   "  }",
+                                                                   "};",
+                                                                   "pm.test(\u0027Response match JSON Schema (Structure \u0026 Boundaries)\u0027, function () { pm.response.to.have.jsonSchema(schema); });",
+                                                                   "pm.test(\u0027Má»—i slot cÃ³ tá»‘i Ä‘a 3 Ä‘á» tÃ i\u0027, function () {",
+                                                                   "    var jsonData = pm.response.json();",
+                                                                   "    jsonData.forEach(slot =\u003e {",
+                                                                   "        if (slot.topics) pm.expect(slot.topics.length).to.be.at.most(3);",
+                                                                   "    });",
+                                                                   "});",
+                                                                   "pm.test(\u0027Má»—i slot pháº£i cÃ³ Ä‘Ãºng 2 GV Review\u0027, function () {",
+                                                                   "    var jsonData = pm.response.json();",
+                                                                   "    jsonData.forEach(slot =\u003e {",
+                                                                   "        if (slot.reviewers) pm.expect(slot.reviewers.length).to.eql(2);",
+                                                                   "    });",
+                                                                   "});"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  "{{baseUrl}}/api/Schedule/1"
+                                 }
+                 },
+                 {
+                     "name":  "7. Get All Lecturers",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Status code is 200\u0027, function () { pm.response.to.have.status(200); });",
+                                                                   "pm.test(\u0027Response is array\u0027, function () { pm.expect(pm.response.json()).to.be.an(\u0027array\u0027); });"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  "{{baseUrl}}/api/Lecturer"
+                                 }
+                 },
+                 {
+                     "name":  "8. Get All Teams",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Status code is 200\u0027, function () { pm.response.to.have.status(200); });",
+                                                                   "pm.test(\u0027Response is array\u0027, function () { pm.expect(pm.response.json()).to.be.an(\u0027array\u0027); });"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  "{{baseUrl}}/api/Team"
+                                 }
+                 },
+                 {
+                     "name":  "9. Create New Slot (Moderator Setup)",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Status code is 200\u0027, function () { pm.response.to.have.status(200); });",
+                                                                   "pm.test(\u0027Message contains success\u0027, function () { pm.expect(pm.response.json().message).to.include(\u0027success\u0027); });"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n  \"reviewRound\": 2,\n  \"startTime\": \"2026-06-01T08:00:00\",\n  \"endTime\": \"2026-06-01T10:00:00\",\n  \"room\": \"Room 303\",\n  \"registrationDeadline\": \"2026-05-30T00:00:00\"\n}"
+                                              },
+                                     "url":  "{{baseUrl}}/api/Slot"
+                                 }
+                 }
+             ],
+    "variable":  [
+                     {
+                         "key":  "baseUrl",
+                         "value":  "http://localhost:5000",
+                         "type":  "string"
+                     }
+                 ]
 }
