@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\projects\\CapstoneProjectReviewRegistrationTool\\CapstoneReview.Repository\\CapstoneReview.Repository.csproj": {}
+    "c:\\projects\\CapstoneProjectReviewRegistrationTool\\CapstoneReview.Repository\\CapstoneReview.Repository.csproj": {}
   },
   "projects": {
-    "C:\\projects\\CapstoneProjectReviewRegistrationTool\\CapstoneReview.Repository\\CapstoneReview.Repository.csproj": {
+    "c:\\projects\\CapstoneProjectReviewRegistrationTool\\CapstoneReview.Repository\\CapstoneReview.Repository.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\projects\\CapstoneProjectReviewRegistrationTool\\CapstoneReview.Repository\\CapstoneReview.Repository.csproj",
+        "projectUniqueName": "c:\\projects\\CapstoneProjectReviewRegistrationTool\\CapstoneReview.Repository\\CapstoneReview.Repository.csproj",
         "projectName": "CapstoneReview.Repository",
-        "projectPath": "C:\\projects\\CapstoneProjectReviewRegistrationTool\\CapstoneReview.Repository\\CapstoneReview.Repository.csproj",
+        "projectPath": "c:\\projects\\CapstoneProjectReviewRegistrationTool\\CapstoneReview.Repository\\CapstoneReview.Repository.csproj",
         "packagesPath": "C:\\Users\\RAVEN\\.nuget\\packages\\",
-        "outputPath": "C:\\projects\\CapstoneProjectReviewRegistrationTool\\CapstoneReview.Repository\\obj\\",
+        "outputPath": "c:\\projects\\CapstoneProjectReviewRegistrationTool\\CapstoneReview.Repository\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\RAVEN\\AppData\\Roaming\\NuGet\\NuGet.Config"

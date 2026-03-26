@@ -55,7 +55,15 @@ docker compose up -d --build
 2. Build và Hosting Web API .NET 10 tại cổng `http://localhost:5000`.
 3. Entity Framework Core tự động Migration/EnsureCreated thiết lập bảng dữ liệu khi khởi chạy.
 
-**3. Tắt hệ thống khi không dùng đến:**
+**3. Lấy Public URL (Cloudflare Tunnel) cho Frontend:**
+Dự án đã được tích hợp sẵn hệ thống Public URL tự động bằng Cloudflare Tunnel. Sau khi khởi chạy `docker-compose up -d`, đường hầm sẽ được mở. Để lấy Public URL cung cấp cho màn hình Đăng nhập của React Frontend, bạn mở Terminal và xem log của Tunnel:
+```bash
+docker logs capstone_tunnel
+```
+Lướt tìm những dòng cuối cùng, bạn sẽ thấy 1 đường link màu xanh có dạng `https://xxxx-xxxx-xxxx.trycloudflare.com`. 
+**Lưu ý:** Lõi C# Backend đã cấu hình mở khóa 100% Policy CORS (`builder.Services.AddCors(...)`), do đó bạn yên tâm sử dụng Link Cloudflare này để fetch bằng Axios mà không bị rào cản.
+
+**4. Tắt hệ thống khi không dùng đến:**
 ```bash
 docker compose down
 ```
